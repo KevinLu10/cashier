@@ -1,0 +1,190 @@
+% rebase('nav_base.html')
+
+<!--用于展示的div-->
+<input id="cashier_id" style="display: none">
+<div id="body-content" class="clearfix row" id="show">
+    <div id="content-block" class="col-sm-11 col-md-10">
+        <form class="exform rended" action="" method="post" id="_form">
+            <ul class="steps-nav nav nav-pills">
+            </ul>
+            <div class="form-container row clearfix">
+                <div class="formColumn column form-column full col col-sm-12 form-horizontal ui-sortable" span="12"
+                     horizontal="True">
+                    <div class="panel panel-default fieldset unsort no_title">
+                        <div class="panel-body">
+                            %if show_user_man:
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <a type="button" class="btn btn-primary" href="/user_man">用户管理
+                                    </a>
+                                </div>
+                            </div>
+                            %end
+
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">“明细”显示列
+                                </label>
+
+                                <div class="controls form-inline" id="former_show_col">
+
+                                    % include('show_cols_include.html')
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">“未来收支”显示列
+                                </label>
+
+                                <div class="controls form-inline" id="future_show_col">
+                                    % include('show_cols_include.html')
+                                </div>
+                            </div>
+                            <!--一行-->
+
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">显示汇率
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <select id="currency" class="input-group text form-control selectpicker"
+                                            name="queue_type">
+                                        <option value="dollar">美金</option>
+                                        <option value="rmb">人民币</option>
+                                        <option value="ab">澳币</option>
+                                        <option value="no_exchange">不转换</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">汇率设置
+                                </label>
+
+                                <div class="controls form-inline">
+
+                                    <div>
+                                        1元人民币=<input type="number" class="form-control " id="rmb2ab">澳币
+                                    </div>
+                                    <div>
+                                        1元人民币=<input type="number" class="form-control " id="rmb2dollar">美元
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">修改密码
+                                </label>
+
+                                <div class="controls form-inline">
+
+                                </div>
+
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">原密码
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input class="form-control" type="password" id="pwd_old">
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">新密码
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input class="form-control" type="password" id="pwd_new2">
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">新密码
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input class="form-control" type="password" id="pwd_new1">
+                                </div>
+                            </div>
+
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <button type="button" class="btn btn-primary" onclick="sub()" id="but_name">保存
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        var former_show_col = "{{former_show_col}}"
+        var future_show_col = "{{future_show_col}}"
+        //    自动选中列
+         former_show_col = former_show_col.split(';')
+        for (var i in former_show_col)
+            $("#former_show_col [name=" + former_show_col[i] + "]").attr('checked', 'true')
+         future_show_col = future_show_col.split(';')
+        for (var i in future_show_col)
+            $("#future_show_col [name=" + future_show_col[i] + "]").attr('checked', 'true')
+
+        $("#currency").val("{{currency}}")
+        $("#rmb2dollar").val("{{currency_rate_rmb2dollar}}")
+        $("#rmb2ab").val("{{currency_rate_rmb2ab}}")
+
+    })
+    function sub() {
+        var former_show_col = new Array()
+        var future_show_col = new Array()
+        $("#former_show_col  input:checkbox:checked ").each(function (index, item) {
+            former_show_col.push(item.name)
+        })
+        $("#future_show_col  input:checkbox:checked ").each(function (index, item) {
+            future_show_col.push(item.name)
+        })
+        former_show_col = former_show_col.join(';')
+        future_show_col = future_show_col.join(';')
+        $.post('/settings', {
+
+                    former_show_col: former_show_col,
+                    future_show_col: future_show_col,
+                    currency: $("#currency").val(),
+                    currency_rate_rmb2ab: $("#rmb2ab").val(),
+                    currency_rate_rmb2dollar: $("#rmb2dollar").val(),
+                    pwd_old: $("#pwd_old").val(),
+                    pwd_new1: $("#pwd_new1").val(),
+                    pwd_new2: $("#pwd_new2").val()
+                },
+                function (data) {
+                    if (data.retcode == 1)
+                        alert('修改成功')
+                    else
+                        alert(data.msg)
+
+
+                }, 'json')
+    }
+
+</script>
+

@@ -1,0 +1,74 @@
+<html>
+<head>
+    <title>index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/css/bootstrap.css" rel="stylesheet" media="screen">
+
+    <link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <style>
+        .form-group {
+            border-bottom: 1px solid #EEE;
+            background-color: #FBFBFB;
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+        }
+
+        .tab-pane {
+            padding: 20px
+        }
+
+        @media (min-width: 768px) {
+            input {
+                max-width: 200px;
+
+            }
+        }
+
+        @media (max-width: 768px) {
+            #future_div input {
+                min-width: 70px;
+            }
+
+            #future_div .form-control {
+                display: inline-block;
+                width: 30%
+            }
+
+            select {
+                max-width: 600px
+                margin: 5px
+            }
+
+        }
+
+        input {
+            margin: 5px
+        }
+
+        select {
+            /*max-width: 200px;*/
+            margin: 5px
+        }
+        a{
+            color:#000000;
+        }
+    </style>
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="static/js/highcharts.js"></script>
+    <script src="static/js/cashier.js"></script>
+</head>
+{{!base}}
+<script>
+    //载入日期控件
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd', //日期格式
+        autoclose: 1, //是否自动关闭控件
+        minView: 2, //最小日期，2为天
+        todayHighlight: 1, //高亮今天
+        forceParse: 1
+
+    });
+</script>
+</html>

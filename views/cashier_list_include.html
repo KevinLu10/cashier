@@ -1,0 +1,51 @@
+
+<a class="btn btn-primary" role="button"   onclick="delete_bat()" > 删除 </a>
+
+<form id="changelist-form" action="" method="post">
+
+<div class="results table-responsive">
+
+    <table class="table table-bordered table-striped table-hover">
+
+        <thead>
+        <tr>
+
+            <th class="action-checkbox-column" scope="col">
+                <input id="select_all" onclick="check_all()" type="checkbox" >
+            </th>
+               %for col in keys:
+
+            <th scope="col">{{cashier_keys_2ch[col]}}</th>
+           %end
+            <th scope="col"></th>
+        </tr>
+
+        </thead>
+
+
+        <tbody >
+        %for d in data:
+
+        <tr class="grid-item " id="cashier{{d['cashier_id']}}" >
+
+            <td class="action-checkbox">
+                <input class="action-select" type="checkbox" name="_selected_action" id="{{d['cashier_id']}}" >
+            </td>
+            %for key in keys:
+            <td   ><a href="/s_cashier_detail?cashier_id={{d['cashier_id']}}">{{d[key]}}</a></td>
+            %end
+            <td>
+                <a class="btn btn-primary btn-xs" role="button" href="javascript:void(0)"  onclick="to_delete('{{d['cashier_id']}}')" > 删除 </a>
+            </td>
+        </tr>
+        %end
+
+
+
+        </tbody>
+
+    </table>
+
+
+</div>
+</form>

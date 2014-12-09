@@ -1,0 +1,42 @@
+
+
+<form id="changelist-form" action="" method="post">
+
+<div class="results table-responsive">
+
+    <table class="table table-bordered table-striped table-hover">
+
+        <thead>
+        <tr>
+            <th scope="col">用户名</th>
+            <th scope="col">用户组</th>
+
+            <th scope="col"></th>
+        </tr>
+
+        </thead>
+
+
+        <tbody>
+        %for d in data:
+
+        <tr class="grid-item "  >
+            <!--<td><a href="javascript:void(0)" onclick="window.location='/update/progress/?task_id=2014-10-31 21:00'+'&amp;rand='+Math.random();">2014-10-31 21:00</a></td>-->
+            <td >{{d['username']}}</td>
+            <td >{{d['group_name']}}</td>
+
+            <td>
+                <a class="btn btn-primary btn-xs" role="button"   onclick="delete_user('{{d['username']}}')" > 删除 </a>
+            </td>
+        </tr>
+        %end
+
+
+
+        </tbody>
+
+    </table>
+
+
+</div>
+</form>

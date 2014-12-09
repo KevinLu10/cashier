@@ -1,0 +1,503 @@
+% rebase('nav_base.html')
+% setdefault('ctrl_type', 'insert')
+% setdefault('cashier_id', '0')
+% setdefault('cashier_code', {'SR':'','ZC':''})
+<!--用于展示的div-->
+ <input id="cashier_id" style="display: none" >
+
+
+<div id="body-content" class="clearfix row" id="show">
+    <div id="content-block" class="col-sm-11 col-md-10">
+        <form class="exform rended" action="/input_xls" enctype ="multipart/form-data"  method="post" id="_form">
+            <ul class="steps-nav nav nav-pills">
+            </ul>
+            <div class="form-container row clearfix">
+                <div class="formColumn column form-column full col col-sm-12 form-horizontal ui-sortable" span="12"
+                     horizontal="True">
+                    <div class="panel panel-default fieldset unsort no_title">
+                        <div class="panel-body">
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">导入
+                                </label>
+                                <div class="controls form-inline">
+                                    <a class="btn btn-primary" href="static/xls/template.xls">下载模版</a>
+
+
+                                    <input type="file" name="input_xls" style="display: inline-block">
+
+                                <button class="btn btn-primary" type="submit">导入</button></div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">收/支
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <select id="type" class="input-group text form-control selectpicker"
+                                            name="queue_type">
+                                        <option value="get">收入</option>
+                                        <option value="pay">支出</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">日期
+                                </label>
+
+                                <div class="controls form-inline">
+                                    %from datetime import datetime
+                                    %now=datetime.now().strftime('%Y-%m-%d')
+                                    <input class="form-control form_datetime " size="16" type="text" id="date"
+                                           value="{{now}}">
+                                </div>
+                            </div>
+                            <!--一行-->
+                            %if ctrl_type=='insert':
+                            <div class="form-group">
+                                <label class="control-label requireField"><input type="checkbox" id="is_future"> 周期性
+                                </label>
+
+                                <div class="controls form-inline" id="future_div">
+                                    每<input class="form-control " style="width:10%" type="number" id="days"
+                                            value="1">
+                                    <select id="day_ratio" class="input-group text form-control selectpicker"
+                                            name="queue_type">
+                                        <option value="day">天</option>
+                                        <option value="week">周</option>
+                                        <option value="month">月</option>
+                                    </select>
+                                    一次，从<input class="form-control form_datetime "  type="text" id="future_from_date"
+                                           value="{{now}}">直至
+                                    <input class="form-control form_datetime " type="text" id="future_date"
+                                           value="{{now}}">
+                                </div>
+                            </div>
+                            %end
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">是否提醒</label>
+
+                                <div class="controls">
+                                    <select id="is_remind" class="input-group text form-control selectpicker"
+                                            name="queue_type">
+                                        <option value="N">不提醒</option>
+                                        <option value="Y">提醒</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <!--一行-->
+
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">收款编号
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input type="text" class="input-group  form-control" id="cashier_code"
+                                           value="{{cashier_code['SR']}}">
+                                </div>
+                            </div>
+
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">收款方式
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <select id="paytype_id" class="input-group text form-control selectpicker"
+                                            >
+                                        %for item in data['paytype']:
+                                        <option value="{{item['paytype_id']}}">{{item['paytype_name']}}</option>
+                                        %end
+                                    </select>
+                                    <button type="button" class="btn btn-primary new_item" id="new_paytype">新增</button>
+                                </div>
+
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">凭证
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <select id="proof_id" class="input-group text form-control selectpicker"
+                                            >
+                                        %for item in data['proof']:
+                                        <option value="{{item['proof_id']}}">{{item['proof_name']}}</option>
+                                        %end
+                                    </select>
+                                    <button type="button" class="btn btn-primary new_item" id="new_proof">新增</button>
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">收款人员
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <select id="pay_user" class="input-group text form-control selectpicker"
+                                            >
+                                        %for item in data['username']:
+                                        <option value="{{item['username']}}">{{item['username']}}</option>
+                                        %end
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">应收金额
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input type="number" class="input-group  form-control" id="payable_money"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label change_type requireField">实收金额
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input type="number" class="input-group  form-control" id="actual_money"
+                                           placeholder="">
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">本次差额
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input type="number" disabled class="input-group  form-control" id="money" placeholder="">
+                                </div>
+                            </div>
+                            <!--一行-->
+
+                            <div class="form-group">
+                                <label class="control-label requireField">客户名称
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <select id="client_id" class="input-group text form-control selectpicker"
+                                            name="queue_type">
+                                        %for client in data['client']:
+                                        <option value="{{client['client_id']}}">{{client['client_name']}}</option>
+                                        %end
+                                    </select>
+                                    <button type="button" class="btn btn-primary new_item" id="new_client">新增</button>
+                                </div>
+
+                            </div>
+                            <!--一行-->
+
+                            <div class="form-group">
+                                <label class="control-label requireField">收款账号
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <select id="account_id" class="input-group text form-control selectpicker"
+                                            name="queue_type">
+                                        %for item in data['account']:
+                                        <option value="{{item['account_id']}}">
+                                            {{item['account_name']}}-余额:{{item['balance']}}
+                                        </option>
+                                        %end
+                                    </select>
+                                    <button type="button" class="btn btn-primary " id="new_account">新增</button>
+                                </div>
+                            </div>
+                            <!--一行-->
+
+                            <div class="form-group">
+                                <label class="control-label requireField">备注
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <textarea id="remark" rows="3"></textarea>
+                                </div>
+                            </div>
+
+
+
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">账号余额
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <input type="text" disabled class="input-group  form-control" id="balance"
+                                            >
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <button type="button" class="btn btn-primary" onclick="sub()" id="but_name">保存
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<!--新增项目对话框-->
+<div class="modal fade" id="modal" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    ×
+                </button>
+                <h4 class="modal-title" id="title"></h4>
+            </div>
+
+            <div class="modal-body">
+                <input type="text" style="display: none" class="input-group  form-control" id="modal_new_type">
+
+                <input type="text" class="input-group  form-control" id="modal_new_text">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    取消
+                </button>
+                <button onclick="new_item_sub()" class="btn btn-primary">
+                    提交
+                </button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!--新增账号对话框-->
+<div class="modal fade" id="modal_account" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    ×
+                </button>
+                <h4 class="modal-title" id=""></h4>
+            </div>
+
+            <div class="modal-body">
+                <input type="text" class=" input-group form-control" id="account_name" placeholder="账号名称">
+                <input type="text" class="input-group form-control" id="account_desc" placeholder="账号描述">
+                账号币种
+                <select id="account_currency" class="input-group text form-control selectpicker"
+                        name="queue_type">
+                    <option value="dollar">美金</option>
+                    <option value="rmb">人民币</option>
+                    <option value="ab">澳币</option>
+                </select>
+                <input type="text" class="input-group  form-control" id="account_about" placeholder="相关实体账号">
+                <input type="text" class="input-group  form-control" id="account_label" placeholder="账号标签,逗号分隔">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    取消
+                </button>
+                <button onclick="new_account_sub()" class="btn btn-primary">
+                    提交
+                </button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<script>
+    var ctrl_type = "{{ctrl_type}}"
+    var ctrl_url = ctrl_type == 'update' ? '/u_cashier' : '/i_cashier'
+    var sub_name = ctrl_type == 'update' ? '修改' : '保存'
+
+    $(document).ready(function () {
+            $("#but_name").html(sub_name)
+//        如果操作类型是修改数据，就把旧的数据加载进来
+        if (ctrl_type == 'update')
+            fill_data()
+
+        $(".new_item").click(function () {
+                    var item_type = this.id.split('_')[1]
+                    $("#modal").modal('show');
+                    $("#modal_new_type").val(item_type)
+                }
+        )
+        $("#new_account").click(function () {
+            $("#modal_account").modal('show')
+
+        })
+//        选择收还是支
+        $('#type').change(function () {
+            var type = $('#type').val()
+            var labels = $("#_form .change_type")
+            labels.each(function (i, label) {
+                var old_name = labels[i].innerHTML
+                if (old_name) {
+                    if (type == 'pay'){
+                        var new_name = old_name.replace('收', '付')
+                        $("#cashier_code").val("{{cashier_code['SR']}}")}
+                    else{
+                        var new_name = old_name.replace('付', '收')
+                        $("#cashier_code").val("{{cashier_code['ZC']}}")}
+                    labels[i].innerHTML = new_name
+                }
+            })
+
+        })
+        //相应金额或账户改变后，计算余额
+        $("#actual_money").change(function () {
+            get_balance()
+        })
+        $("#account_id").change(function () {
+
+            get_balance()
+        })
+         $("#payable_money").change(function () {
+            get_money()
+        })
+        $("#actual_money").change(function () {
+            get_money()
+        })
+    })
+    function new_item_sub() {
+
+        var item_type = $("#modal_new_type").val()
+        var item_name = $("#modal_new_text").val()
+        $.post('/new_item', {
+            item_type: item_type,
+            item_name: item_name
+        }, function (data) {
+            if (data.retcode == 1) {
+                item_id = data.item_id
+                $("#modal").modal('hide');
+                select_html = "<option value='" + item_id + "'>" + item_name + "</option>"
+                $("#new_" + item_type).prev().append(select_html);
+            }
+
+
+        }, 'json')
+
+
+    }
+    function new_account_sub() {
+
+        $.post('/new_account', {
+            account_name: $("#account_name").val(),
+            account_desc: $("#account_desc").val(),
+            account_currency: $("#account_currency").val(),
+            account_about: $("#account_about").val(),
+            account_label: $("#account_label").val()
+        }, function (data) {
+            if (data.retcode == 1) {
+                var item_id = data.item_id
+                $("#modal_account").modal('hide');
+                select_html = "<option value='" + item_id + "'>" + $("#account_name").val() + "-余额:0</option>"
+                $("#new_account").prev().append(select_html);
+            }
+
+
+        }, 'json')
+
+    }
+    function sub() {
+//        var is_future=$("# checked").checked
+
+        if (ctrl_type=='insert'&&document.getElementById('is_future').checked){
+            if (!($("#days").val()&&$("#future_date").val()&&$("#future_from_date").val())){
+                alert('请输入天数和截止日期')
+                return 1
+            }else{
+                var day_ratio =$("#day_ratio").val()
+                days=$("#days").val()
+                if (day_ratio=='month')
+                    days*=30
+                if (day_ratio=='week')
+                    days*=7
+                future_date=$("#future_date").val()
+                $("#date").val($("#future_from_date").val())
+
+            }
+
+
+        }else{
+            days=''
+            future_date=''
+        }
+        if(!($("#payable_money").val()&&$("#actual_money").val())){
+        alert('请输入金额')
+        return 1}
+
+
+        $.post(ctrl_url, {
+            cashier_id: $("#cashier_id").val(),
+            date: $("#date").val(),
+            cashier_code: $("#cashier_code").val(),
+            paytype_id: $("#paytype_id").val(),
+            proof_id: $("#proof_id").val(),
+            payable_money: $("#payable_money").val(),
+            actual_money: $("#actual_money").val(),
+            money: $("#money").val(),
+            client_id: $("#client_id").val(),
+            account_id: $("#account_id").val(),
+            pay_user: $("#pay_user").val(),
+            remark: $("#remark").val(),
+            days: days,
+            future_date:future_date,
+            type:$("#type").val(),
+            is_remind:$("#is_remind").val()
+        }, function (data) {
+            if (data.retcode == 1) {
+                alert('操作成功')
+                location.href = '/s_cashier_list'
+            }
+
+
+        }, 'json')
+    }
+    function get_balance() {
+        var balance_old = parseFloat($("#account_id").text().split(':')[1])
+        var money = parseFloat($("#actual_money").val())
+        var type = $("#type").val()
+
+
+        balance_new = type == 'pay' ? balance_old - money : balance_old + money
+        $("#balance").val(balance_new)
+    }
+    function get_money(){
+        var actual_money=parseFloat($("#actual_money").val())
+         var payable_money=parseFloat($("#payable_money").val())
+        if (payable_money&&actual_money)
+                $("#money").val(payable_money-actual_money)
+    }
+    function fill_data() {
+    %if ctrl_type == 'update':
+        %for k, v in cashier_data.items():
+             $("#{{k}}").val("{{v}}")
+        % end
+        % type='get' if cashier_data['actual_money']>0 else 'pay'
+        $("#type").val("{{type}}")
+        $("#type").change()
+    % end
+
+    }
+
+</script>
+

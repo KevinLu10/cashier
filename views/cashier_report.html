@@ -1,0 +1,162 @@
+% rebase('nav_base.html')
+<div class="bs-example bs-example-tabs">
+    <ul id="" class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a id="load_ratio" href="#ratio" id="home-tab" role="tab"
+                                                  data-toggle="tab"
+                                                  aria-controls="home" aria-expanded="false">账户余额比例图</a></li>
+        <li role="presentation"><a  href="#tendency" id="load_tendency" role="tab" id="profile-tab" data-toggle="tab"
+                                   aria-controls="profile" aria-expanded="true">收支趋势图</a></li>
+
+    </ul>
+    <div id="TabContent" class="tab-content">
+
+        <div role="tabpanel" class="tab-pane fade active in" id="ratio" >
+            <!--账户金额比例的饼状图-->
+            <div id="container_ratio"></div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade " id="tendency">
+            <!--收支趋势图-->
+            <div class="form-container row clearfix">
+                <div class="formColumn column form-column full col col-sm-12 form-horizontal ui-sortable" span="12"
+                     horizontal="True">
+                    <div class="panel panel-default fieldset unsort no_title">
+                        <div class="panel-body">
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">日期
+                                </label>
+
+                                %from datetime import datetime,timedelta
+                                %now=datetime.now().strftime('%Y-%m-%d')
+                                %six_month_ago=(datetime.now()-timedelta(days=90)).strftime('%Y-%m-%d')
+
+
+                                <div class="controls form-inline">
+                                    <input class="form-control form_datetime input-sm" size="16" type="text" id="date1"
+                                           value="{{six_month_ago}}">到
+                                    <input class="form-control form_datetime " size="16" type="text" id="date2"
+                                           value="{{now}}">
+
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <button type="button" class="btn btn-primary" onclick="load_tendency()" id="start_game">查找
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="container_tendency"  ></div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        load_ratio()
+        load_tendency()
+
+    })
+    function load_ratio() {
+
+        $.post("/report_ratio", {
+
+
+        }, function (data) {
+            if (data.retcode == 1)
+                $('#container_ratio').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: '账户余额比例图'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                color: '#000000',
+                                connectorColor: '#000000',
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                            }
+                        }
+                    },
+                    series: [
+                        {
+                            type: 'pie',
+                            name: '余额比例',
+                            data: data.data
+                        }
+                    ]
+                });
+        }, "json");
+    }
+    function load_tendency() {
+
+        $.post("/report_tendency", {
+ date1:$("#date1").val(),
+            date2:$("#date2").val()
+        }, function (data) {
+            if (data.retcode == 1)
+                $('#container_tendency').highcharts({
+                    title: {
+                        text: '收支趋势图',
+                        x: -20 //center
+                    },
+
+                    xAxis: {
+                        categories: data.months
+                    },
+                    yAxis: {
+                        title: {
+                            text: '元'
+                        },
+                        plotLines: [
+                            {
+                                value: 0,
+                                width: 1,
+                                color: '#808080'
+                            }
+                        ]
+                    },
+                    tooltip: {
+                        valueSuffix: ''
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0
+                    },
+                    series: [
+                        {
+                            name: '收入',
+                            data: data.money_get
+                        },
+                        {
+                            name: '支出',
+                            data: data.money_pay
+                        }
+                    ]
+                });
+        }, "json");
+    }
+</script>

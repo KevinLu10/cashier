@@ -1,0 +1,82 @@
+% rebase('nav_base.html')
+<!--用于展示的div-->
+<div id="body-content" class="clearfix row" id="show">
+    <div id="content-block" class="col-sm-11 col-md-10">
+        <form class="exform rended" action="" method="post" id="_form">
+            <ul class="steps-nav nav nav-pills">
+            </ul>
+            <div class="form-container row clearfix">
+                <div class="formColumn column form-column full col col-sm-12 form-horizontal ui-sortable" span="12"
+                     horizontal="True">
+                    <div class="panel panel-default fieldset unsort no_title">
+                        <div class="panel-body">
+                            <!--一行-->
+                            <div class="form-group" id='show_col'>
+                                <label class="control-label requireField">显示的列
+                                </label>
+
+                                <div class="controls form-inline">
+
+                                    % include('show_cols_include.html')
+
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">筛选条件
+                                </label>
+
+                                %from datetime import datetime
+                                %now=datetime.now().strftime('%Y-%m-%d')
+
+
+                                <div class="controls form-inline">
+                                    <input class="form-control form_datetime " size="16" type="text" id="date1"
+                                           value="{{now}}">到
+                                    <input class="form-control form_datetime " size="16" type="text" id="date2"
+                                           value="{{now}}">
+                                    |
+                                    <select id="type" class="input-group text form-control selectpicker"
+                                            >
+
+                                        <option value=""></option>
+                                        <option value="get">收入</option>
+                                        <option value="pay">支出</option>
+                                    </select>
+
+                                </div>
+                            </div>
+                            <!--一行-->
+                            <div class="form-group">
+                                <label class="control-label requireField">
+                                </label>
+
+                                <div class="controls form-inline">
+                                    <button type="button" class="btn btn-primary"  id='search' onclick="before_sub('','1')" >筛选
+                                    </button> <button type="button" class="btn btn-primary" onclick="before_sub('1','2')" >导出xls文件
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div id='show_result'></div>
+<ul class="pagination" id="page">
+
+</ul>
+% include('cashier_list_include_js.html',ctrl_type='list')
+<script>
+
+function before_sub(is_input_xls,cur_page){
+    sub(is_input_xls,cur_page,$("#date1").val(),$("#date2").val())
+}
+
+</script>
+

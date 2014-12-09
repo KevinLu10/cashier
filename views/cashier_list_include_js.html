@@ -1,0 +1,106 @@
+<script>
+    var total_page=0;
+    $(document).ready(function () {
+//    自动选中列
+        var former_show_col = "{{former_show_col}}"
+//    var former_show_col="date;account_name"
+        var cols = former_show_col.split(';')
+        for (var i in cols)
+            $("#show_col [name=" + cols[i] + "]").attr('checked', 'true')
+        %if ctrl_type=='list':
+            sub('',1,'1950-01-01','{{now}}');
+        %else :
+            %from datetime import timedelta
+            %now1=datetime.now()+timedelta(days=1)
+            sub('',1,'{{now1}}','2114-01-01');
+        %end
+    })
+
+    function sub(is_output_xls,cur_page,start_time,end_time) {
+        var show_cols = Array()
+        $("#show_col   input:checkbox:checked").each(function (index, item) {
+
+            show_cols.push(item.name)
+        })
+        show_cols = show_cols.join(';')
+        if (!show_cols) {
+            alert('请输入要显示的列')
+            return
+        }
+        if(start_time)
+            var date1=start_time
+        else
+            var date1=$("#date1").val()
+        $.post('/s_cashier_list', {
+
+            date1: start_time,
+            date2: end_time,
+            show_cols: show_cols,
+            is_output_xls: is_output_xls,
+            cur_page: cur_page,
+            ctrl_type: "{{ctrl_type}}"
+            %if ctrl_type=='list':
+            ,type:$("#type").val()
+
+        %end
+        }, function (data) {
+            if (data.retcode == 1) {
+                if (is_output_xls)
+                    location.href = data.url
+                else
+                    $("#show_result").html(data.data)
+                if (cur_page==1)
+                    total_page = Math.ceil(data.total_num / 20);
+                $("#page").html(page_builder(total_page, cur_page));
+                $("#page a").click(function() {//点击页码
+
+                    cur_page = parseInt($(this).html());
+                    if (!isNaN(cur_page))
+                        sub('',cur_page,start_time,end_time);
+
+                });
+            }
+
+
+        }, 'json')
+    }
+
+    function to_detail(cashier_id) {
+        location.href = '/s_cashier_detail?cashier_id=' + cashier_id
+    }
+    function to_delete(cashier_id) {
+        delete_one(cashier_id)
+
+            alert('删除成功')
+
+    }
+    function delete_bat() {
+        //批量删除
+        $("#show_result input:checkbox:checked").each(function (i, item) {
+            delete_one(item.id)
+        })
+        alert('删除成功')
+    }
+    function delete_one(cashier_id) {
+        $.post('/d_cashier', {
+            cashier_id: cashier_id
+        }, function (data) {
+            if (data.retcode == 1) {
+                $('#cashier'+cashier_id).remove()
+                return 1
+
+            }
+            return 0
+
+
+        }, 'json')
+    }
+    function check_all(){
+            $('#show_result input:checkbox').each(function(index,item){
+
+                item.checked=$("#select_all").is(":checked");
+            })
+
+    }
+
+</script>
